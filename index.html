@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Python Placement Prep Exam</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="q_section1.js"></script>
+  <script src="q_section2.js"></script>
+  <script src="q_section3.js"></script>
+  <script src="q_section4.js"></script>
+  <script src="q_section5.js"></script>
+  <script src="q_section6.js"></script>
+  <script src="q_section7.js"></script>
+  <script src="q_section8.js"></script>
+  <script src="q_section9.js"></script>
+  <script src="q_section10.js"></script>
+  <script src="questions.js"></script>
+</head>
+<body>
+
+<!-- SCREEN 1: LANDING -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-card">
+    <div class="logo">🐍</div>
+    <h1>Python Placement Prep</h1>
+    <p class="subtitle">500+ questions covering everything from basics to advanced — built for campus placements</p>
+    <div class="form-group">
+      <label>Your Name</label>
+      <input type="text" id="candidate-name" placeholder="Enter your name" autocomplete="off"/>
+    </div>
+    <div class="form-group">
+      <label>Report will be emailed to</label>
+      <input type="email" id="report-email" placeholder="Enter email address" autocomplete="off"/>
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="goToSectionSelect()">Start Exam →</button>
+  </div>
+</div>
+
+<!-- SCREEN 2: SECTION SELECT -->
+<div id="screen-sections" class="screen">
+  <div class="section-select-wrap">
+    <h2>Choose Sections</h2>
+    <p>Select sections to attempt. You can do all at once or one at a time.</p>
+    <div class="section-grid" id="section-grid"></div>
+    <div class="section-actions">
+      <button class="btn btn-outline" onclick="toggleAllSections()">Select / Deselect All</button>
+      <button class="btn btn-primary btn-lg" onclick="startExam()">Begin Selected Sections →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: EXAM -->
+<div id="screen-exam" class="screen">
+  <header class="exam-header">
+    <div class="exam-meta">
+      <span id="candidate-display"></span>
+      <span class="divider">|</span>
+      <span id="section-label"></span>
+    </div>
+    <div class="exam-timer" id="exam-timer">00:00</div>
+    <div class="exam-progress-wrap">
+      <div class="exam-progress-bar">
+        <div class="exam-progress-fill" id="progress-fill"></div>
+      </div>
+      <span id="progress-text">1 / 50</span>
+    </div>
+  </header>
+
+  <main class="exam-main">
+    <div class="question-card" id="question-card">
+      <div class="question-top">
+        <span class="q-number" id="q-number">Q1</span>
+        <span class="q-type-badge" id="q-type-badge">MCQ</span>
+        <span class="q-difficulty" id="q-difficulty"></span>
+        <button class="flag-btn" id="flag-btn" onclick="toggleFlag()" title="Flag for review">⚑</button>
+      </div>
+      <div class="question-text" id="question-text"></div>
+      <div class="options-area" id="options-area"></div>
+      <div class="coding-area" id="coding-area" style="display:none">
+        <textarea id="code-editor" placeholder="Write your Python code here..."></textarea>
+      </div>
+      <div class="short-area" id="short-area" style="display:none">
+        <textarea id="short-answer" placeholder="Write your answer here..."></textarea>
+      </div>
+    </div>
+
+    <div class="question-nav">
+      <button class="btn btn-outline" onclick="prevQuestion()" id="btn-prev">← Prev</button>
+      <div class="q-dots" id="q-dots"></div>
+      <button class="btn btn-primary" onclick="nextQuestion()" id="btn-next">Next →</button>
+    </div>
+
+    <div class="section-submit-wrap">
+      <button class="btn btn-success" onclick="submitSection()">Submit Section ✓</button>
+    </div>
+  </main>
+</div>
+
+<!-- SCREEN 4: SECTION RESULT -->
+<div id="screen-section-result" class="screen">
+  <div class="result-card">
+    <div class="section-score-header">
+      <h2 id="sr-section-name"></h2>
+      <div class="big-score" id="sr-score"></div>
+      <div class="score-label" id="sr-label"></div>
+    </div>
+    <div class="sr-breakdown" id="sr-breakdown"></div>
+    <div class="sr-actions">
+      <button class="btn btn-outline" onclick="reviewSection()">Review Answers</button>
+      <button class="btn btn-primary btn-lg" onclick="nextSection()" id="btn-next-section">Next Section →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: REVIEW (read-only) -->
+<div id="screen-review" class="screen">
+  <div class="review-wrap">
+    <div class="review-header">
+      <h2>Review: <span id="review-section-name"></span></h2>
+      <button class="btn btn-primary" onclick="exitReview()" id="btn-exit-review">Continue →</button>
+    </div>
+    <div id="review-questions"></div>
+  </div>
+</div>
+
+<!-- SCREEN 6: FINAL RESULTS -->
+<div id="screen-final" class="screen">
+  <div class="final-wrap">
+    <div class="final-header">
+      <div class="trophy">🏆</div>
+      <h1>Exam Complete!</h1>
+      <div class="final-name" id="final-name"></div>
+      <div class="overall-score" id="overall-score"></div>
+      <div class="overall-label" id="overall-label"></div>
+    </div>
+
+    <div class="section-breakdown" id="section-breakdown"></div>
+
+    <div class="tips-box" id="tips-box"></div>
+
+    <div class="final-actions">
+      <button class="btn btn-outline" onclick="downloadPDF()">⬇ Download PDF Report</button>
+      <button class="btn btn-primary btn-lg" onclick="emailReport()">✉ Email Report to Me</button>
+    </div>
+    <p class="restart-link" onclick="restartExam()">Start a new exam</p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
